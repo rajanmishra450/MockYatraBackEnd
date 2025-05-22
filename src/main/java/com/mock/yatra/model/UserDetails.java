@@ -9,11 +9,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_NULL)
+@ToString
 public class UserDetails {
 	
 	private String userId;
