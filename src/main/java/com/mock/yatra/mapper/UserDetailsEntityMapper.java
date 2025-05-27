@@ -19,7 +19,7 @@ public class UserDetailsEntityMapper {
 				.dob(userDetails.getDOB())
 				.emailId(userDetails.getEmailId())
 				.password(bCryptPasswordEncoder.encode(userDetails.getPassword()))
-				.userId(userDetails.getUserId())
+				.userId(userDetails.getEmailId())
 				.build();
 	}
 }

@@ -9,5 +9,4 @@ public class MockYatraBackEndApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MockYatraBackEndApplication.class, args);
 	}
-
 }
