@@ -44,7 +44,7 @@ public class MockYatraAuthService {
 
 	public void performSignUp(UserDetails request) {
 
-		if (userRepository.findByUserId(request.getUserId()).isPresent()) {
+		if (userRepository.findByUserId(request.getEmailId()).isPresent()) {
 			throw new BusinessException("User already exists", HttpStatus.BAD_REQUEST);
 		}
 		userRepository.save(UserDetailsEntityMapper.mapFromUserDetails(request));
@@ -71,6 +71,7 @@ public class MockYatraAuthService {
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(emailId);
 		mail.setSubject("Reset Your Password");
+		//TODO UI URL needs to set
 		mail.setText("Click here to reset your password: http://localhost:8080/mock/yatra/auth/reset/password?token=" + token);
 		mailSender.send(mail);
 	}
@@ -80,7 +81,7 @@ public class MockYatraAuthService {
 				.orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
 		if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-			new BusinessException("Password Link expired", HttpStatus.BAD_REQUEST);
+            throw new BusinessException("Password Link expired", HttpStatus.BAD_REQUEST);
 		}
 
 		UserDetailsEntity user = resetToken.getUser();

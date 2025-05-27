@@ -32,7 +32,7 @@ public class MockYatraAuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody UserDetails request) {
-		log.info("Received Register Request for userId : {}", request.getUserId());
+		log.info("Received Register Request for userId : {}", request.getEmailId());
 		mockYatraAuthService.performSignUp(request);
 		return ResponseEntity.ok("User registered successfully");
 	}
