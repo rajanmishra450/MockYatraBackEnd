@@ -23,71 +23,69 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MockYatraAuthService {
 
-	private final UserRepository userRepository;
-	private final JwtService jwtService;
-	private final BCryptPasswordEncoder passwordEncoder;
-	private final PasswordResetTokenRepository passwordResetTokenRepository;
-	private final JavaMailSender mailSender;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final JavaMailSender mailSender;
 
-	public UserDetails performLogin(UserDetails request) {
+    public UserDetails performLogin(UserDetails request) {
 
-		UserDetailsEntity user = userRepository.findByUserId(request.getUserId())
-				.orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
+        UserDetailsEntity user = userRepository.findByUserId(request.getUserId()).orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
-		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-			throw new BusinessException("Invalid credentials", HttpStatus.UNAUTHORIZED);
-		}
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BusinessException("Invalid credentials", HttpStatus.UNAUTHORIZED);
+        }
 
-		String token = jwtService.generateToken(user.getUserId());
-		return UserDetails.builder().token(token).build();
-	}
+        String token = jwtService.generateToken(user.getUserId());
+        return UserDetails.builder().token(token).build();
+    }
 
-	public void performSignUp(UserDetails request) {
+    public void performSignUp(UserDetails request) {
 
-		if (userRepository.findByUserId(request.getEmailId()).isPresent()) {
-			throw new BusinessException("User already exists", HttpStatus.BAD_REQUEST);
-		}
-		userRepository.save(UserDetailsEntityMapper.mapFromUserDetails(request));
-	}
+        if (userRepository.findByUserId(request.getEmailId()).isPresent()) {
+            throw new BusinessException("User already exists", HttpStatus.BAD_REQUEST);
+        }
+        userRepository.save(UserDetailsEntityMapper.mapFromUserDetails(request));
+    }
 
-	public void performForgetPasswordOperation(String emailId) {
+    public void performForgetPasswordOperation(String emailId) {
 
-		UserDetailsEntity user = userRepository.findByUserId(emailId)
-				.orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
+        UserDetailsEntity user = userRepository.findByUserId(emailId)
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
 
-		PasswordResetTokenEntity passwordResetTokenEntity = preparePasswordResetToken(user);
-		passwordResetTokenRepository.save(passwordResetTokenEntity);
+        PasswordResetTokenEntity passwordResetTokenEntity = preparePasswordResetToken(user);
+        passwordResetTokenRepository.save(passwordResetTokenEntity);
 
-		sendPasswordResetMail(emailId, passwordResetTokenEntity.getToken());
-	}
+        sendPasswordResetMail(emailId, passwordResetTokenEntity.getToken());
+    }
 
-	private PasswordResetTokenEntity preparePasswordResetToken(UserDetailsEntity user) {
-		String token = UUID.randomUUID().toString();
-		return PasswordResetTokenEntity.builder().expiryDate(LocalDateTime.now().plusHours(2)).user(user).token(token)
-				.build();
-	}
+    private PasswordResetTokenEntity preparePasswordResetToken(UserDetailsEntity user) {
+        String token = UUID.randomUUID().toString();
+        return PasswordResetTokenEntity.builder().expiryDate(LocalDateTime.now().plusHours(2)).user(user).token(token).build();
+    }
 
-	private void sendPasswordResetMail(String emailId, String token) {
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(emailId);
-		mail.setSubject("Reset Your Password");
-		//TODO UI URL needs to set
-		mail.setText("Click here to reset your password: http://localhost:8080/mock/yatra/auth/reset/password?token=" + token);
-		mailSender.send(mail);
-	}
+    private void sendPasswordResetMail(String emailId, String token) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(emailId);
+        mail.setSubject("Reset Your Password");
+        //TODO UI URL needs to set
+        mail.setText("Click here to reset your password: http://localhost:8080/mock/yatra/auth/reset/password?token=" + token);
+        mailSender.send(mail);
+    }
 
-	public void performResetPassword(String token, String newPassword) {
-		PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token)
-				.orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
+    public void performResetPassword(String token, String newPassword) {
+        PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
-		if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new BusinessException("Password Link expired", HttpStatus.BAD_REQUEST);
-		}
+        }
 
-		UserDetailsEntity user = resetToken.getUser();
-		user.setPassword(passwordEncoder.encode(newPassword));
-		userRepository.save(user);
+        UserDetailsEntity user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
 
-		passwordResetTokenRepository.delete(resetToken);
-	}
+        passwordResetTokenRepository.delete(resetToken);
+    }
 }
