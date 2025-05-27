@@ -31,7 +31,8 @@ public class MockYatraAuthService {
 
     public UserDetails performLogin(UserDetails request) {
 
-        UserDetailsEntity user = userRepository.findByUserId(request.getUserId()).orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
+        UserDetailsEntity user = userRepository.findByUserId(request.getUserId()).orElseThrow(
+                () -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BusinessException("Invalid credentials", HttpStatus.UNAUTHORIZED);
@@ -51,8 +52,8 @@ public class MockYatraAuthService {
 
     public void performForgetPasswordOperation(String emailId) {
 
-        UserDetailsEntity user = userRepository.findByUserId(emailId)
-                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
+        UserDetailsEntity user = userRepository.findByUserId(emailId).orElseThrow(
+                () -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
 
         PasswordResetTokenEntity passwordResetTokenEntity = preparePasswordResetToken(user);
         passwordResetTokenRepository.save(passwordResetTokenEntity);
@@ -62,7 +63,8 @@ public class MockYatraAuthService {
 
     private PasswordResetTokenEntity preparePasswordResetToken(UserDetailsEntity user) {
         String token = UUID.randomUUID().toString();
-        return PasswordResetTokenEntity.builder().expiryDate(LocalDateTime.now().plusHours(2)).user(user).token(token).build();
+        return PasswordResetTokenEntity.builder().expiryDate(LocalDateTime.now()
+                .plusHours(2)).user(user).token(token).build();
     }
 
     private void sendPasswordResetMail(String emailId, String token) {
@@ -75,8 +77,8 @@ public class MockYatraAuthService {
     }
 
     public void performResetPassword(String token, String newPassword) {
-        PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
+        PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token).orElseThrow(
+                () -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
         if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new BusinessException("Password Link expired", HttpStatus.BAD_REQUEST);
