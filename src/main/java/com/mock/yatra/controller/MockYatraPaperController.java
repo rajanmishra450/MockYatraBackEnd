@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mock.yatra.entity.UserDetailsEntity;
 import com.mock.yatra.service.MockYatraPaperService;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class MockYatraPaperController {
-	
+
 	private MockYatraPaperService paperService;
 
     @PostMapping("/generate/{examType}")
