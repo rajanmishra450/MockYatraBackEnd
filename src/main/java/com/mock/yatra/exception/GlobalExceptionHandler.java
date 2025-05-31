@@ -2,6 +2,7 @@ package com.mock.yatra.exception;
 
 import java.time.LocalDateTime;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,12 +13,13 @@ import com.mock.yatra.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex, HttpServletRequest request) {
-
+		log.error("Business Error occurred while calling this request {} ,Exception : {} ",request,ex.toString());
         ErrorResponse error = ErrorResponse.builder()
         		.error(ex.getStatus().getReasonPhrase())
         		.message(ex.getMessage())
@@ -32,6 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleOtherExceptions(
             Exception ex, HttpServletRequest request) {
+		log.error("Error occurred while calling this request {} ,Exception : {} ",request,ex.toString());
     	ErrorResponse error = ErrorResponse.builder()
     			.error("Internal Server Error")
     			.message("Something went wrong. Please try again later.")

@@ -50,7 +50,7 @@ public class MockYatraAuthService {
         userRepository.save(UserDetailsEntityMapper.mapFromUserDetails(request));
     }
 
-    public void performForgetPasswordOperation(String emailId) {
+    public String performForgetPasswordOperation(String emailId) {
 
         UserDetailsEntity user = userRepository.findByUserId(emailId).orElseThrow(
                 () -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
@@ -59,6 +59,8 @@ public class MockYatraAuthService {
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
         sendPasswordResetMail(emailId, passwordResetTokenEntity.getToken());
+
+        return passwordResetTokenEntity.getToken();
     }
 
     private PasswordResetTokenEntity preparePasswordResetToken(UserDetailsEntity user) {
