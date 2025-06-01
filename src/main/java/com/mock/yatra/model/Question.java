@@ -18,4 +18,5 @@ public class Question {
     private String question;
     private Map<String, String> options;
     private String correctAnswer;
+    private String selectedAnswer;
 }

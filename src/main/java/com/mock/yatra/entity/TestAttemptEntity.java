@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 public class TestAttemptEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_attempt_seq_gen")
+    @SequenceGenerator(name = "test_attempt_seq_gen", sequenceName = "test_attempt_seq", allocationSize = 1)
     private Long id;
 
     private String userId;
@@ -33,7 +34,5 @@ public class TestAttemptEntity {
     @Column(name = "SUBMITTED_TIMESTAMP")
     private LocalDateTime submittedTimestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "QUESTION_PAPER_ID")
-    private QuestionPaperEntity questionPaper;
+    private Long questionPaperId;
 }

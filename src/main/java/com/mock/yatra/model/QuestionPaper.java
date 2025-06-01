@@ -17,5 +17,6 @@ public class QuestionPaper {
 
     private Long id;
     private String examType;
+    private Integer score;
     private List<Section> sections;
 }

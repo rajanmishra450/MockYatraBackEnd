@@ -3,11 +3,7 @@ package com.mock.yatra.controller;
 import com.mock.yatra.model.QuestionPaperData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.mock.yatra.service.MockYatraPaperService;
 
@@ -27,18 +23,26 @@ public class MockYatraPaperController {
         String version = paperService.generateAndSavePaper(examType);
         return ResponseEntity.ok("Generated version: " + version);
     }
-    
-    @GetMapping("/start/{examType}")
-    public ResponseEntity<QuestionPaperData> startPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
-        log.info("User : {} Starting paper for examType {} ",userId, examType);
+
+    @GetMapping("/{examType}")
+    public ResponseEntity<QuestionPaperData> getExamPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
+        log.info("User : {} fetching paper for examType {} ",userId, examType);
         QuestionPaperData questionPaperData = paperService.getQuestionPaper(examType,userId);
         return ResponseEntity.ok(questionPaperData);
     }
+    
+    @PostMapping("/start/{questionPaperId}")
+    public ResponseEntity<Void> startPaper(@AuthenticationPrincipal String userId,@PathVariable Long questionPaperId) {
+        log.info("User : {} Starting paper for questionPaperId {} ",userId, questionPaperId);
+        paperService.startPaper(questionPaperId,userId);
+        return ResponseEntity.ok().build();
+    }
 
-    @PostMapping("/submit/{examType}")
-    public ResponseEntity<QuestionPaperData> submitPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
-        log.info("User : {} Submitting paper for examType {} ",userId, examType);
-        QuestionPaperData questionPaperData = paperService.getQuestionPaper(examType,userId);
-        return ResponseEntity.ok(questionPaperData);
+    @PostMapping("/submit")
+    public ResponseEntity<Void> submitPaper(@AuthenticationPrincipal String userId,
+                                                         @RequestBody QuestionPaperData questionPaperData) {
+        log.info("User : {} Submitting paper for questionPaperId {} ",userId, questionPaperData.getQuestionPaper().getId());
+        paperService.submitPaper(questionPaperData,userId);
+        return ResponseEntity.ok().build();
     }
 }

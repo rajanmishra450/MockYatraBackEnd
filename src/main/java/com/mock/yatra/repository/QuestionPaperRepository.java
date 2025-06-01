@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 import com.mock.yatra.entity.QuestionPaperEntity;
 
 @Repository
-public interface QuestionPaperRepository extends JpaRepository<QuestionPaperEntity, String> {
+public interface QuestionPaperRepository extends JpaRepository<QuestionPaperEntity, Long> {
 
     List<QuestionPaperEntity> findByExamType(String examType);
 
     @Query("""
                 SELECT qp FROM QuestionPaperEntity qp
-                LEFT JOIN TestAttemptEntity ta ON ta.questionPaper.id = qp.id AND ta.userId = :userId
+                LEFT JOIN TestAttemptEntity ta ON ta.questionPaperId = qp.id AND ta.userId = :userId
                 WHERE ta.id IS NULL AND qp.examType = :examType
                 ORDER BY qp.createdTimestamp DESC
             """)
