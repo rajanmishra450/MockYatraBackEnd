@@ -30,6 +30,14 @@ public class MockYatraPaperController {
     
     @GetMapping("/start/{examType}")
     public ResponseEntity<QuestionPaperData> startPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
+        log.info("User : {} Starting paper for examType {} ",userId, examType);
+        QuestionPaperData questionPaperData = paperService.getQuestionPaper(examType,userId);
+        return ResponseEntity.ok(questionPaperData);
+    }
+
+    @PostMapping("/submit/{examType}")
+    public ResponseEntity<QuestionPaperData> submitPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
+        log.info("User : {} Submitting paper for examType {} ",userId, examType);
         QuestionPaperData questionPaperData = paperService.getQuestionPaper(examType,userId);
         return ResponseEntity.ok(questionPaperData);
     }

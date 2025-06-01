@@ -15,5 +15,7 @@ import java.util.List;
 @ToString
 public class QuestionPaper {
 
+    private Long id;
+    private String examType;
     private List<Section> sections;
 }

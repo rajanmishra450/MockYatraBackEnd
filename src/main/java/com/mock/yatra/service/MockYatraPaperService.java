@@ -54,16 +54,20 @@ public class MockYatraPaperService {
     }
 
     private List<String> fetchExistingVersionsFromPaper(List<QuestionPaperEntity> questionPapers) {
-
         return questionPapers.stream().map(QuestionPaperEntity::getVersionId).collect(Collectors.toList());
-
     }
 
 	public QuestionPaperData getQuestionPaper(String examType,String userid) {
 		QuestionPaperEntity questionPaperEntity = getUnattemptedPaper(userid,examType);
-		// mapper will convert into Json that will return to UI and
-        return getQuestionPaperData(questionPaperEntity);
+        QuestionPaperData questionPaperData = getQuestionPaperData(questionPaperEntity);
+        enrichQuestionPaperData(questionPaperData, questionPaperEntity);
+        return questionPaperData;
 	}
+
+    private static void enrichQuestionPaperData(QuestionPaperData questionPaperData, QuestionPaperEntity questionPaperEntity) {
+        questionPaperData.getQuestionPaper().setId(questionPaperEntity.getId());
+        questionPaperData.getQuestionPaper().setExamType(questionPaperEntity.getExamType());
+    }
 
     private QuestionPaperData getQuestionPaperData(QuestionPaperEntity questionPaperEntity)  {
         try {
