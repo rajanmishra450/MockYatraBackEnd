@@ -38,7 +38,7 @@ public class MockYatraPaperController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/submit")
+    @PatchMapping("/submit")
     public ResponseEntity<Void> submitPaper(@AuthenticationPrincipal String userId,
                                                          @RequestBody QuestionPaperData questionPaperData) {
         log.info("User : {} Submitting paper for questionPaperId {} ",userId, questionPaperData.getQuestionPaper().getId());
