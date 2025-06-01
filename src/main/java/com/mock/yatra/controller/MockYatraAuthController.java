@@ -46,9 +46,9 @@ public class MockYatraAuthController {
 	}
 
 	@PostMapping("/reset/password")
-	public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-		log.info("Received reset password request for token : {}", token);
-		mockYatraAuthService.performResetPassword(token, newPassword);
+	public ResponseEntity<String> resetPassword(@RequestBody UserDetails request) {
+		log.info("Received reset password request for token : {}", request.getToken());
+		mockYatraAuthService.performResetPassword(request.getToken(), request.getPassword());
 		return ResponseEntity.ok("Password reset successfully");
 	}
 }
