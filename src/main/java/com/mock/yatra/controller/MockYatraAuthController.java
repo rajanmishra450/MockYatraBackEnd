@@ -41,8 +41,8 @@ public class MockYatraAuthController {
 	public ResponseEntity<String> forgotPassword(@RequestParam String email) {
 		//TODO need to change design to prevent hacking
 		log.info("Received Forget password request for userId : {}", email);
-		String token = mockYatraAuthService.performForgetPasswordOperation(email);
-		return ResponseEntity.ok(token);
+		mockYatraAuthService.performForgetPasswordOperation(email);
+		return ResponseEntity.ok("Password Reset link sent to your email");
 	}
 
 	@PostMapping("/reset/password")

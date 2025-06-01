@@ -1,5 +1,6 @@
 package com.mock.yatra.controller;
 
+import com.mock.yatra.model.QuestionPaperData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/mock/yatra/papers")
+@RequestMapping("/mock/yatra/paper")
 @Slf4j
 @AllArgsConstructor
 public class MockYatraPaperController {
@@ -27,9 +28,9 @@ public class MockYatraPaperController {
         return ResponseEntity.ok("Generated version: " + version);
     }
     
-    @GetMapping("/start")
-    public ResponseEntity<String> startPaper(@AuthenticationPrincipal String userId ) {
-        
-        return ResponseEntity.ok("User Loggin Is " +userId );
+    @GetMapping("/start/{examType}")
+    public ResponseEntity<QuestionPaperData> startPaper(@AuthenticationPrincipal String userId,@PathVariable String examType) {
+        QuestionPaperData questionPaperData = paperService.getQuestionPaper(examType,userId);
+        return ResponseEntity.ok(questionPaperData);
     }
 }
